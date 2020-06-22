@@ -5,20 +5,21 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 import scipy.optimize as opt
 file1 = '/Users/mac/Documents/ML-homework-Octave/machine-learning-ex2/ex2/ex2data1.txt'
+file2= '/Users/mac/Documents/ML-homework-Octave/machine-learning-ex2/ex2/ex2data2.txt'
 
 #加载数据
 data = pd.read_csv(file1, header=None, names=['Exam 1', 'Exam 2', 'IsAdmitted'])
 #用图表表示样本，positive代表被录取，negative表示没被录取，对应离散值分别为0，1
-# positive = data[data['IsAdmitted'].isin([1])]
-# negative = data[data['IsAdmitted'].isin([0])]
-#
-# fig, ax = plt.subplots(figsize=(12, 8))
-# ax.scatter(positive['Exam 1'], positive['Exam 2'], s=50, c='black', marker='o', label='Admitted')
-# ax.scatter(negative['Exam 1'], negative['Exam 2'], s=50, c='yellow', marker='x', label='Not Admitted')
-# ax.legend()
-# ax.set_xlabel('Exam 1 Score')
-# ax.set_ylabel('Exam 2 Score')
-# plt.show()
+positive = data[data['IsAdmitted'].isin([1])]
+negative = data[data['IsAdmitted'].isin([0])]
+
+fig, ax = plt.subplots(figsize=(12, 8))
+ax.scatter(positive['Exam 1'], positive['Exam 2'], s=50, c='black', marker='o', label='Admitted')
+ax.scatter(negative['Exam 1'], negative['Exam 2'], s=50, c='yellow', marker='x', label='Not Admitted')
+ax.legend()
+ax.set_xlabel('Exam 1 Score')
+ax.set_ylabel('Exam 2 Score')
+plt.show()
 
 #实现逻辑回归
 #Compute Cost and Gradient
@@ -70,6 +71,8 @@ def costFunction(theta, X, y):
     y = np.matrix(y)
     h = sigmoid(np.dot(X, theta.T))
     m = len(X)
+
+    print(theta.shape)
     J = np.sum(np.multiply(-y, np.log(h)) - np.multiply(1-y, np.log(1-h)) )/m
     return J
 
@@ -129,4 +132,25 @@ accuracy = (sum(map(int, correct)) % len(correct))
 print('accuracy = {0}%'.format(accuracy))
 
 #画出决策边界
+#先画出散点图
+def plotDecisionBoundary(theta,X,y):
+    label = np.array(y)
+    index_0 = np.where(label.ravel() == 0)
+    plt.scatter(X[index_0, 1].tolist(), X[index_0, 2].tolist(), marker='x', color='yellow', label='Not admitted', s=30)
+    index_1 = np.where(label.ravel() == 1)
+    plt.scatter(X[index_1, 1].tolist(), X[index_1, 2].tolist(), marker='o', color='black', label='Admitted', s=30)
+    #再画边界
+    x1 = np.arange(20, 100, 0.5)
 
+    #把参数矩阵转为数组
+    theta_temp = np.array(theta)
+
+    #predict y=1 <=> theta0 + theta1*x1 + theta2*x2 =0  => x2 = (-theta0 - theta1*x1)/theta2
+    x2 = (- theta_temp[0] - theta_temp[1]*x1) / theta_temp[2]
+    plt.plot(x1, x2, color='black')
+    plt.xlabel('Exam 1 Score')
+    plt.ylabel('Exam 2 Score')
+    plt.legend(loc='upper left')
+    plt.show()
+
+plotDecisionBoundary(theta,X,y)
