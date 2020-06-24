@@ -38,16 +38,14 @@ print('theta2 :'+str(theta2.shape))
 
 
 print('-------')
+
 a0 = X
 z1 = np.dot(a0, theta1.T) # (5000, 401) @ (25,401).T = (5000, 25)
-print(z1.shape)
 z1 = np.insert(z1, 0, values=np.ones(z1.shape[0]), axis=1)
 a1 = sigmoid(z1)
-print(a1.shape)
 z2 = np.dot(a1, theta2.T)
-print(z2.shape)
 a2 = sigmoid(z2)
-print(a2.shape)
+
 
 # numpy is 0 base index, +1 for matlab convention，返回沿轴axis最大值的索引，axis=1代表行
 y_pred = np.argmax(a2, axis=1) + 1
